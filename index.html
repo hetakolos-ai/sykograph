@@ -3,140 +3,139 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SYK's Crypto Dashboard</title>
+<title>SYK Crypto Pro Dashboard</title>
 
 <style>
-:root {
-    --bg: #0c0f12;
-    --panel: #161a1e;
-    --text: #ffffff;
-    --accent: #00ffcc;
-    --input: #23282f;
+:root{
+    --bg:#0b0f14;
+    --panel:#151b22;
+    --text:#ffffff;
+    --accent:#00ffcc;
+    --muted:#8a8f98;
 }
 
-.light-theme {
-    --bg: #f4f6f9;
-    --panel: #ffffff;
-    --text: #000000;
-    --accent: #0284c7;
-    --input: #e2e8f0;
+.light-theme{
+    --bg:#f5f7fb;
+    --panel:#ffffff;
+    --text:#0a0a0a;
+    --accent:#2563eb;
+    --muted:#555;
 }
 
-body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: Arial, sans-serif;
-    margin: 0;
+body{
+    margin:0;
+    font-family:Arial;
+    background:var(--bg);
+    color:var(--text);
 }
 
-#title-screen {
-    position: fixed;
-    inset: 0;
-    background: rgba(12, 15, 18, 0.95);
-    backdrop-filter: blur(10px);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    z-index: 10000;
+#title{
+    position:fixed;
+    inset:0;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    background:rgba(0,0,0,0.85);
+    z-index:9999;
 }
 
-#title-screen h1 {
-    font-size: 2.5rem;
+button{
+    cursor:pointer;
 }
 
-.theme-btn {
-    padding: 12px 25px;
-    margin: 10px;
-    cursor: pointer;
-    border: none;
-    border-radius: 8px;
-    font-weight: bold;
+.theme-btn{
+    padding:12px 20px;
+    margin:8px;
+    border-radius:8px;
+    border:none;
+    font-weight:bold;
 }
 
-.dark-btn { background: #161a1e; color: #fff; border: 1px solid #00ffcc; }
-.light-btn { background: #fff; color: #000; border: 1px solid #0284c7; }
-
-#main-app {
-    display: none;
-    padding: 20px;
-    flex-direction: column;
-    gap: 20px;
+#app{
+    display:none;
+    padding:15px;
 }
 
-.nav-bar {
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 10px;
+.nav{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+    flex-wrap:wrap;
 }
 
-.search-container {
-    display: flex;
-    background: var(--input);
-    border-radius: 6px;
-    overflow: hidden;
+.search{
+    display:flex;
+    background:var(--panel);
+    border-radius:8px;
+    overflow:hidden;
 }
 
-.search-input {
-    border: none;
-    padding: 8px;
-    background: transparent;
-    color: var(--text);
-    outline: none;
+.search input{
+    border:none;
+    outline:none;
+    padding:10px;
+    background:transparent;
+    color:var(--text);
+    width:180px;
 }
 
-.search-btn {
-    background: var(--accent);
-    border: none;
-    padding: 8px 12px;
-    cursor: pointer;
+.search button{
+    background:var(--accent);
+    border:none;
+    padding:10px 14px;
+    font-weight:bold;
 }
 
-.switch-btn {
-    padding: 8px 12px;
-    border: 1px solid var(--accent);
-    background: var(--panel);
-    color: var(--text);
-    cursor: pointer;
-    border-radius: 6px;
+.container{
+    display:flex;
+    gap:15px;
+    margin-top:15px;
+    flex-wrap:wrap;
 }
 
-.dashboard-container {
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
+#chart{
+    flex:2;
+    min-width:320px;
+    height:520px;
+    background:var(--panel);
+    border-radius:10px;
 }
 
-#tv-widget {
-    flex: 2;
-    min-width: 300px;
-    height: 500px;
-    background: var(--panel);
-    border-radius: 8px;
+#list{
+    flex:1;
+    min-width:260px;
+    background:var(--panel);
+    border-radius:10px;
+    padding:10px;
+    max-height:520px;
+    overflow:auto;
 }
 
-#coin-list {
-    flex: 1;
-    min-width: 250px;
-    max-height: 500px;
-    overflow-y: auto;
-    background: var(--panel);
-    padding: 10px;
-    border-radius: 8px;
+.coin{
+    display:flex;
+    justify-content:space-between;
+    padding:10px;
+    margin-bottom:8px;
+    border-radius:8px;
+    background:rgba(255,255,255,0.03);
+    cursor:pointer;
+    transition:0.2s;
 }
 
-.crypto-card {
-    padding: 12px;
-    margin-bottom: 8px;
-    background: rgba(255,255,255,0.05);
-    border-radius: 6px;
-    cursor: pointer;
+.coin:hover{
+    background:var(--accent);
+    color:#000;
 }
 
-.crypto-card:hover {
-    background: var(--accent);
-    color: #000;
+.price{
+    font-size:0.8rem;
+    color:var(--muted);
+}
+
+.star{
+    cursor:pointer;
 }
 </style>
 </head>
@@ -144,114 +143,141 @@ body {
 <body>
 
 <!-- SPLASH -->
-<div id="title-screen">
-    <h1>SYK's Crypto Dashboard</h1>
-    <p style="color:#aaa;">Choose theme</p>
+<div id="title">
+    <h1>SYK Crypto Pro</h1>
+    <p style="color:#aaa">Choose theme</p>
     <div>
-        <button class="theme-btn dark-btn" onclick="selectTheme('dark')">Dark</button>
-        <button class="theme-btn light-btn" onclick="selectTheme('light')">Light</button>
+        <button class="theme-btn" style="background:#111;color:#fff" onclick="start('dark')">Dark</button>
+        <button class="theme-btn" style="background:#fff" onclick="start('light')">Light</button>
     </div>
 </div>
 
-<!-- MAIN APP -->
-<div id="main-app">
+<!-- APP -->
+<div id="app">
 
-    <div class="nav-bar">
-        <h2>Crypto Tracker</h2>
+<div class="nav">
+    <h2>Crypto Pro Dashboard</h2>
 
-        <div class="search-container">
-            <input id="crypto-search" class="search-input" placeholder="BTC, ETH..." onkeydown="handleSearchKeyPress(event)">
-            <button class="search-btn" onclick="executeSearch()">Go</button>
-        </div>
-
-        <button class="switch-btn" onclick="toggleTheme()">Toggle Theme</button>
+    <div class="search">
+        <input id="search" placeholder="BTC, ETH..." onkeydown="key(event)">
+        <button onclick="search()">Go</button>
     </div>
 
-    <div class="dashboard-container">
-
-        <div id="tv-widget"></div>
-
-        <div id="coin-list">
-            <div class="crypto-card" onclick="changeChart('BTC')">BTC</div>
-            <div class="crypto-card" onclick="changeChart('ETH')">ETH</div>
-            <div class="crypto-card" onclick="changeChart('SOL')">SOL</div>
-            <div class="crypto-card" onclick="changeChart('BNB')">BNB</div>
-            <div class="crypto-card" onclick="changeChart('XRP')">XRP</div>
-            <div class="crypto-card" onclick="changeChart('ADA')">ADA</div>
-        </div>
-
-    </div>
+    <button onclick="toggleTheme()">Theme</button>
 </div>
 
-<!-- ✅ FIXED TRADINGVIEW LIBRARY -->
+<div class="container">
+
+    <div id="chart"></div>
+
+    <div id="list"></div>
+
+</div>
+
+</div>
+
+<!-- TradingView -->
 <script src="https://s3.tradingview.com/tv.js"></script>
 
 <script>
-let currentTheme = "dark";
-let currentSymbol = "BTC";
+let theme="dark";
+let current="BTC";
+let watch=[];
 
-function selectTheme(theme){
-    currentTheme = theme;
+const coins=["BTC","ETH","SOL","BNB","XRP","ADA","DOGE","AVAX","DOT","LINK"];
 
-    if(theme === "light"){
-        document.body.classList.add("light-theme");
-    } else {
-        document.body.classList.remove("light-theme");
-    }
-
-    document.getElementById("title-screen").style.display = "none";
-    document.getElementById("main-app").style.display = "flex";
-
-    setTimeout(() => loadChart("BTC"), 300);
+function start(t){
+    theme=t;
+    document.getElementById("title").style.display="none";
+    document.getElementById("app").style.display="block";
+    load(current);
+    loadPrices();
+    setInterval(loadPrices,10000);
 }
 
 function toggleTheme(){
     document.body.classList.toggle("light-theme");
-    currentTheme = currentTheme === "dark" ? "light" : "dark";
-    loadChart(currentSymbol);
+    theme = theme==="dark"?"light":"dark";
+    load(current);
 }
 
-function changeChart(symbol){
-    currentSymbol = symbol;
-    loadChart(symbol);
-}
-
-function loadChart(symbol){
+function load(symbol){
+    current=symbol;
 
     if(!window.TradingView){
-        setTimeout(() => loadChart(symbol), 500);
+        setTimeout(()=>load(symbol),500);
         return;
     }
 
-    document.getElementById("tv-widget").innerHTML = "";
+    document.getElementById("chart").innerHTML="";
 
     new TradingView.widget({
-        container_id: "tv-widget",
-        width: "100%",
-        height: "100%",
-        symbol: "BINANCE:" + symbol + "USDT",
-        interval: "30",
-        timezone: "Etc/UTC",
-        theme: currentTheme,
-        style: "1",
-        locale: "en",
-        allow_symbol_change: true
+        container_id:"chart",
+        width:"100%",
+        height:"100%",
+        symbol:"BINANCE:"+symbol+"USDT",
+        interval:"30",
+        theme:theme,
+        style:"1",
+        locale:"en"
     });
 }
 
-function executeSearch(){
-    const input = document.getElementById("crypto-search");
-    if(input.value.trim()){
-        changeChart(input.value.trim().toUpperCase());
-        input.value = "";
+function search(){
+    const v=document.getElementById("search").value.trim().toUpperCase();
+    if(v) load(v);
+}
+
+function key(e){
+    if(e.key==="Enter") search();
+}
+
+function toggleWatch(c){
+    if(watch.includes(c)){
+        watch=watch.filter(x=>x!==c);
+    }else{
+        watch.push(c);
+    }
+    render();
+}
+
+async function loadPrices(){
+    try{
+        const res=await fetch("https://api.binance.com/api/v3/ticker/price");
+        const data=await res.json();
+
+        const map={};
+        data.forEach(d=>{
+            const sym=d.symbol.replace("USDT","");
+            map[sym]=parseFloat(d.price).toFixed(2);
+        });
+
+        render(map);
+    }catch(e){
+        console.log("price error");
     }
 }
 
-function handleSearchKeyPress(e){
-    if(e.key === "Enter"){
-        e.preventDefault();
-        executeSearch();
-    }
+function render(prices={}){
+    const list=document.getElementById("list");
+    list.innerHTML="";
+
+    coins.forEach(c=>{
+        const el=document.createElement("div");
+        el.className="coin";
+
+        el.innerHTML=`
+            <div onclick="load('${c}')">
+                <b>${c}</b>
+                <div class="price">$${prices[c]||"..."}</div>
+            </div>
+            <div class="star" onclick="toggleWatch('${c}')">
+                ${watch.includes(c)?"⭐":"☆"}
+            </div>
+        `;
+
+        list.appendChild(el);
+    });
 }
 </script>
 
