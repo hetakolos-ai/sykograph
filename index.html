@@ -99,7 +99,7 @@ body {
     gap: 10px;
 }
 
-/* 🔍 SEARCH */
+/* 🔍 FIXED SEARCH LAYOUT */
 .search-container {
     display: flex;
     align-items: center;
@@ -214,6 +214,7 @@ body {
         <h1>SYK's Live Tracker</h1>
         
         <div class="nav-controls">
+            <!-- Form tags removed to completely prevent automatic enter-refresh wipes -->
             <div class="search-container">
                 <input type="text" id="crypto-search" class="search-input" placeholder="Search coin (e.g. SOL, DOGE)..." onkeydown="handleSearchKeyPress(event)">
                 <button class="search-btn" onclick="executeSearch()">Go</button>
@@ -230,14 +231,13 @@ body {
     </div>
 </div>
 
+<!-- 🔒 STABLE CDN WIDGET SCRIPTS -->
 <script src="https://tradingview.com"></script>
 
 <script>
 let currentTheme = "dark";
 let currentSymbol = "BTC";
-let cryptoData = {};
 
-// Default Top 10 configurations
 const coinsMeta = {
     'BTC': { name: 'Bitcoin' },
     'ETH': { name: 'Ethereum' },
@@ -269,11 +269,13 @@ function toggleTheme(){
 
 function loadChart(symbol){
     currentSymbol = symbol.toUpperCase();
-    document.getElementById("chart").innerHTML = "";
+    const chartDiv = document.getElementById("chart");
+    chartDiv.innerHTML = "";
 
-    if (typeof TradingView === 'undefined') {
-        document.getElementById("chart").innerHTML = "<p style='padding:20px;'>Loading chart engine...</p>";
-        setTimeout(() => loadChart(symbol), 1000);
+    // Ultimate structural check: waits gracefully if global library script delay happens
+    if (typeof TradingView === 'undefined' || !TradingView.widget) {
+        chartDiv.innerHTML = "<p style='padding:20px; color:#888;'>Synchronizing trading engine tickers...</p>";
+        setTimeout(() => loadChart(symbol), 800);
         return;
     }
 
@@ -297,22 +299,21 @@ function executeSearch() {
     const query = inputField.value.trim();
     if (query !== "") {
         loadChart(query);
-        inputField.value = "";
+        inputField.value = ""; // Safely blank field after injection occurs
     }
 }
 
 function handleSearchKeyPress(event) {
     if (event.key === "Enter") {
+        event.preventDefault(); // HALTS form-erase cycle dead in its tracks
         executeSearch();
     }
 }
 
-// ⚡ LIVE DIRECT WEBSOCKET CONNECTION (Completely immune to CORS / Proxy blocks)
 function startLivePriceStream() {
     const listContainer = document.getElementById("coin-list");
-    
-    // Initialize standard container fields
     listContainer.innerHTML = "";
+    
     Object.keys(coinsMeta).forEach(sym => {
         const card = document.createElement("div");
         card.className = "crypto-card";
@@ -328,7 +329,6 @@ function startLivePriceStream() {
         listContainer.appendChild(card);
     });
 
-    // Subscribes directly to Binance WebSockets stream network
     const streams = Object.keys(coinsMeta).map(sym => `${sym.toLowerCase()}usdt@ticker`).join('/');
     const ws = new WebSocket(`wss://://binance.com{streams}`);
 
@@ -353,14 +353,8 @@ function startLivePriceStream() {
         }
     };
 
-    ws.onerror = (err) => {
-        console.error("WebSocket Error: ", err);
-    };
-
-    ws.onclose = () => {
-        // Automatically reconnects if stream ever disconnects
-        setTimeout(startLivePriceStream, 3000);
-    };
+    ws.onerror = (err) => { console.error("Stream break diagnostic logs:", err); };
+    ws.onclose = () => { setTimeout(startLivePriceStream, 2000); };
 }
 </script>
 
