@@ -262,6 +262,19 @@ function render(prices={}){
 }
 </script>
 <style>
+  /* 3. Force the chart and the sidebar list to fill the vertical space */
+  iframe, .tradingview-widget-container {
+      height: 100% !important;
+      min-height: 75vh;
+  }
+
+  /* Allows you to scroll down the crypto list if it overflows the screen */
+  #list {
+      height: 100% !important;
+      min-height: 75vh;
+      overflow-y: auto; /* Adds a scrollbar only inside the sidebar when needed */
+  }
+
   /* 1. Reset base page constraints */
   html, body {
       height: 100vh;
