@@ -99,7 +99,7 @@ body {
     gap: 10px;
 }
 
-/* 🔍 FIXED SEARCH LAYOUT */
+/* 🔍 STABLE SEARCH LAYOUT */
 .search-container {
     display: flex;
     align-items: center;
@@ -150,12 +150,13 @@ body {
     flex-wrap: wrap;
 }
 
-#chart {
+#chart-box {
     flex: 2.5;
     min-width: 300px;
     height: 500px;
     background: var(--panel);
     border-radius: 8px;
+    overflow: hidden;
 }
 
 #coin-list {
@@ -170,7 +171,7 @@ body {
 
 .crypto-card {
     background: rgba(255,255,255,0.04);
-    padding: 12px 15px;
+    padding: 15px;
     margin-bottom: 8px;
     border-radius: 6px;
     cursor: pointer;
@@ -197,7 +198,7 @@ body {
 
 <body>
 
-<!-- 🎬 Title / Splash Screen -->
+<!-- 🎬 Splash Selection Portal -->
 <div id="title-screen">
     <h1>SYK's Crypto Dashboard</h1>
     <div class="author-tag">made by koli</div>
@@ -208,13 +209,12 @@ body {
     </div>
 </div>
 
-<!-- 📊 Main App Screen -->
+<!-- 📊 App Canvas Workspace -->
 <div id="main-app">
     <div class="nav-bar">
         <h1>SYK's Live Tracker</h1>
         
         <div class="nav-controls">
-            <!-- Form tags removed to completely prevent automatic enter-refresh wipes -->
             <div class="search-container">
                 <input type="text" id="crypto-search" class="search-input" placeholder="Search coin (e.g. SOL, DOGE)..." onkeydown="handleSearchKeyPress(event)">
                 <button class="search-btn" onclick="executeSearch()">Go</button>
@@ -224,32 +224,30 @@ body {
     </div>
 
     <div class="dashboard-container">
-        <div id="chart"></div>
+        <!-- 🔒 Static Unblockable Widget Sandbox Frame -->
+        <div id="chart-box">
+            <iframe id="tv-iframe" src="https://tradingview.com" style="width: 100%; height: 100%; border: none; margin: 0; padding: 0;"></iframe>
+        </div>
+
+        <!-- Sidebar Navigation Deck -->
         <div id="coin-list">
-            <p style="padding: 10px;">Connecting live streaming nodes...</p>
+            <div class="crypto-card" onclick="changeChart('BTC')"><div><strong>BTC</strong><div style="font-size:0.75rem; color:#888;">Bitcoin</div></div><div style="text-align:right;"><span style="color:#00ffcc; font-weight:bold;">Live Chart</span></div></div>
+            <div class="crypto-card" onclick="changeChart('ETH')"><div><strong>ETH</strong><div style="font-size:0.75rem; color:#888;">Ethereum</div></div><div style="text-align:right;"><span style="color:#00ffcc; font-weight:bold;">Live Chart</span></div></div>
+            <div class="crypto-card" onclick="changeChart('SOL')"><div><strong>SOL</strong><div style="font-size:0.75rem; color:#888;">Solana</div></div><div style="text-align:right;"><span style="color:#00ffcc; font-weight:bold;">Live Chart</span></div></div>
+            <div class="crypto-card" onclick="changeChart('BNB')"><div><strong>BNB</strong><div style="font-size:0.75rem; color:#888;">BNB Token</div></div><div style="text-align:right;"><span style="color:#00ffcc; font-weight:bold;">Live Chart</span></div></div>
+            <div class="crypto-card" onclick="changeChart('XRP')"><div><strong>XRP</strong><div style="font-size:0.75rem; color:#888;">Ripple</div></div><div style="text-align:right;"><span style="color:#00ffcc; font-weight:bold;">Live Chart</span></div></div>
+            <div class="crypto-card" onclick="changeChart('ADA')"><div><strong>ADA</strong><div style="font-size:0.75rem; color:#888;">Cardano</div></div><div style="text-align:right;"><span style="color:#00ffcc; font-weight:bold;">Live Chart</span></div></div>
+            <div class="crypto-card" onclick="changeChart('DOGE')"><div><strong>DOGE</strong><div style="font-size:0.75rem; color:#888;">Dogecoin</div></div><div style="text-align:right;"><span style="color:#00ffcc; font-weight:bold;">Live Chart</span></div></div>
+            <div class="crypto-card" onclick="changeChart('DOT')"><div><strong>DOT</strong><div style="font-size:0.75rem; color:#888;">Polkadot</div></div><div style="text-align:right;"><span style="color:#00ffcc; font-weight:bold;">Live Chart</span></div></div>
+            <div class="crypto-card" onclick="changeChart('LINK')"><div><strong>LINK</strong><div style="font-size:0.75rem; color:#888;">Chainlink</div></div><div style="text-align:right;"><span style="color:#00ffcc; font-weight:bold;">Live Chart</span></div></div>
+            <div class="crypto-card" onclick="changeChart('AVAX')"><div><strong>AVAX</strong><div style="font-size:0.75rem; color:#888;">Avalanche</div></div><div style="text-align:right;"><span style="color:#00ffcc; font-weight:bold;">Live Chart</span></div></div>
         </div>
     </div>
 </div>
 
-<!-- 🔒 STABLE CDN WIDGET SCRIPTS -->
-<script src="https://tradingview.com"></script>
-
 <script>
 let currentTheme = "dark";
 let currentSymbol = "BTC";
-
-const coinsMeta = {
-    'BTC': { name: 'Bitcoin' },
-    'ETH': { name: 'Ethereum' },
-    'SOL': { name: 'Solana' },
-    'BNB': { name: 'BNB' },
-    'XRP': { name: 'Ripple' },
-    'ADA': { name: 'Cardano' },
-    'DOGE': { name: 'Dogecoin' },
-    'DOT': { name: 'Polkadot' },
-    'LINK': { name: 'Chainlink' },
-    'AVAX': { name: 'Avalanche' }
-};
 
 function selectTheme(theme){
     currentTheme = theme;
@@ -257,104 +255,39 @@ function selectTheme(theme){
         document.body.classList.add("light-theme");
     }
     document.getElementById("title-screen").style.display = "none";
-    loadChart(currentSymbol);
-    startLivePriceStream();
+    updateFrame();
 }
 
 function toggleTheme(){
     document.body.classList.toggle("light-theme");
     currentTheme = currentTheme === "dark" ? "light" : "dark";
-    loadChart(currentSymbol);
+    updateFrame();
 }
 
-function loadChart(symbol){
+function changeChart(symbol){
     currentSymbol = symbol.toUpperCase();
-    const chartDiv = document.getElementById("chart");
-    chartDiv.innerHTML = "";
+    updateFrame();
+}
 
-    // Ultimate structural check: waits gracefully if global library script delay happens
-    if (typeof TradingView === 'undefined' || !TradingView.widget) {
-        chartDiv.innerHTML = "<p style='padding:20px; color:#888;'>Synchronizing trading engine tickers...</p>";
-        setTimeout(() => loadChart(symbol), 800);
-        return;
-    }
-
-    new TradingView.widget({
-        container_id: "chart",
-        width: "100%",
-        height: "100%",
-        symbol: "BINANCE:" + currentSymbol + "USDT",
-        interval: "30",
-        theme: currentTheme,
-        style: "1",
-        toolbar_bg: currentTheme === "dark" ? "#161a1e" : "#ffffff",
-        enable_publishing: false,
-        hide_side_toolbar: false,
-        allow_symbol_change: true
-    });
+function updateFrame() {
+    const iframe = document.getElementById("tv-iframe");
+    iframe.src = `https://tradingview.com{currentSymbol}USDT&interval=30&theme=${currentTheme}&style=1&timezone=exchange`;
 }
 
 function executeSearch() {
     const inputField = document.getElementById("crypto-search");
     const query = inputField.value.trim();
     if (query !== "") {
-        loadChart(query);
-        inputField.value = ""; // Safely blank field after injection occurs
+        changeChart(query);
+        inputField.value = "";
     }
 }
 
 function handleSearchKeyPress(event) {
     if (event.key === "Enter") {
-        event.preventDefault(); // HALTS form-erase cycle dead in its tracks
+        event.preventDefault(); // Deadlocks form refresh
         executeSearch();
     }
-}
-
-function startLivePriceStream() {
-    const listContainer = document.getElementById("coin-list");
-    listContainer.innerHTML = "";
-    
-    Object.keys(coinsMeta).forEach(sym => {
-        const card = document.createElement("div");
-        card.className = "crypto-card";
-        card.id = `card-${sym}`;
-        card.setAttribute("onclick", `loadChart('${sym}')`);
-        card.innerHTML = `
-            <div><strong>${sym}</strong><div style="font-size:0.75rem; color:#888;">${coinsMeta[sym].name}</div></div>
-            <div style="text-align: right;">
-                <div id="price-${sym}" style="font-weight: bold;">$--.--</div>
-                <span id="percent-${sym}" style="font-size: 0.85rem; font-weight: bold;">0.00%</span>
-            </div>
-        `;
-        listContainer.appendChild(card);
-    });
-
-    const streams = Object.keys(coinsMeta).map(sym => `${sym.toLowerCase()}usdt@ticker`).join('/');
-    const ws = new WebSocket(`wss://://binance.com{streams}`);
-
-    ws.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-        const sym = data.s.replace("USDT", "");
-        
-        const price = parseFloat(data.c);
-        const percentage = parseFloat(data.P);
-        
-        const priceEl = document.getElementById(`price-${sym}`);
-        const percentEl = document.getElementById(`percent-${sym}`);
-        
-        if(priceEl && percentEl) {
-            priceEl.innerText = `$${price.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-            
-            const changeColor = percentage >= 0 ? "#00ffcc" : "#ff4a5a";
-            const prefix = percentage >= 0 ? "+" : "";
-            
-            percentEl.innerText = `${prefix}${percentage.toFixed(2)}%`;
-            percentEl.style.color = changeColor;
-        }
-    };
-
-    ws.onerror = (err) => { console.error("Stream break diagnostic logs:", err); };
-    ws.onclose = () => { setTimeout(startLivePriceStream, 2000); };
 }
 </script>
 
