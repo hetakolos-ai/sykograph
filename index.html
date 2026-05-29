@@ -29,6 +29,7 @@ body{
     color:var(--text);
 }
 
+/* SPLASH */
 #title{
     position:fixed;
     inset:0;
@@ -40,23 +41,22 @@ body{
     z-index:9999;
 }
 
-button{
-    cursor:pointer;
-}
-
 .theme-btn{
     padding:12px 20px;
     margin:8px;
     border-radius:8px;
     border:none;
     font-weight:bold;
+    cursor:pointer;
 }
 
+/* APP */
 #app{
     display:none;
     padding:15px;
 }
 
+/* NAV */
 .nav{
     display:flex;
     justify-content:space-between;
@@ -88,31 +88,34 @@ button{
     font-weight:bold;
 }
 
+/* MAIN LAYOUT (IMPORTANT FIX) */
 .container{
     display:flex;
     gap:15px;
     margin-top:15px;
-    flex-wrap:wrap;
+    height: calc(100vh - 120px);
 }
 
+/* BIG CHART */
 #chart{
-    flex:2;
-    min-width:320px;
-    height:520px;
+    flex:3;
     background:var(--panel);
     border-radius:10px;
+    height: 100%;
+    min-width: 60%;
 }
 
+/* RIGHT SIDE COINS (NOW FULL HEIGHT) */
 #list{
     flex:1;
-    min-width:260px;
     background:var(--panel);
     border-radius:10px;
     padding:10px;
-    max-height:520px;
-    overflow:auto;
+    height: 100%;
+    overflow-y:auto;
 }
 
+/* COIN ROW */
 .coin{
     display:flex;
     justify-content:space-between;
@@ -133,10 +136,6 @@ button{
     font-size:0.8rem;
     color:var(--muted);
 }
-
-.star{
-    cursor:pointer;
-}
 </style>
 </head>
 
@@ -156,7 +155,7 @@ button{
 <div id="app">
 
 <div class="nav">
-    <h2>Crypto Pro Dashboard</h2>
+    <h2>Crypto Dashboard</h2>
 
     <div class="search">
         <input id="search" placeholder="BTC, ETH..." onkeydown="key(event)">
@@ -167,11 +166,8 @@ button{
 </div>
 
 <div class="container">
-
     <div id="chart"></div>
-
     <div id="list"></div>
-
 </div>
 
 </div>
@@ -182,7 +178,6 @@ button{
 <script>
 let theme="dark";
 let current="BTC";
-let watch=[];
 
 const coins=["BTC","ETH","SOL","BNB","XRP","ADA","DOGE","AVAX","DOT","LINK"];
 
@@ -232,15 +227,6 @@ function key(e){
     if(e.key==="Enter") search();
 }
 
-function toggleWatch(c){
-    if(watch.includes(c)){
-        watch=watch.filter(x=>x!==c);
-    }else{
-        watch.push(c);
-    }
-    render();
-}
-
 async function loadPrices(){
     try{
         const res=await fetch("https://api.binance.com/api/v3/ticker/price");
@@ -253,9 +239,7 @@ async function loadPrices(){
         });
 
         render(map);
-    }catch(e){
-        console.log("price error");
-    }
+    }catch(e){}
 }
 
 function render(prices={}){
@@ -270,9 +254,6 @@ function render(prices={}){
             <div onclick="load('${c}')">
                 <b>${c}</b>
                 <div class="price">$${prices[c]||"..."}</div>
-            </div>
-            <div class="star" onclick="toggleWatch('${c}')">
-                ${watch.includes(c)?"⭐":"☆"}
             </div>
         `;
 
