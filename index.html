@@ -25,7 +25,7 @@
 body {
     background: var(--bg);
     color: var(--text);
-    font-family: 'Segoe UI', Arial, sans-serif;
+    font-family: Arial, sans-serif;
     margin: 0;
 }
 
@@ -36,8 +36,8 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(12, 15, 18, 0.96);
-    backdrop-filter: blur(12px);
+    background: rgba(12, 15, 18, 0.95);
+    backdrop-filter: blur(10px);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -67,7 +67,7 @@ body {
     border: none;
     border-radius: 8px;
     font-weight: bold;
-    transition: transform 0.2s, opacity 0.2s;
+    transition: transform 0.2s;
 }
 
 .theme-btn:hover {
@@ -99,7 +99,7 @@ body {
     gap: 10px;
 }
 
-/* 🔍 SEARCH UTILITIES */
+/* 🔍 SEARCH */
 .search-container {
     display: flex;
     align-items: center;
@@ -143,7 +143,7 @@ body {
     border-radius: 5px;
 }
 
-/* DASHBOARD GRID SYSTEM */
+/* DASHBOARD LAYOUT */
 .dashboard-container {
     display: flex;
     gap: 20px;
@@ -153,7 +153,7 @@ body {
 #chart {
     flex: 2.5;
     min-width: 300px;
-    height: 520px;
+    height: 500px;
     background: var(--panel);
     border-radius: 8px;
 }
@@ -161,7 +161,7 @@ body {
 #coin-list {
     flex: 1;
     min-width: 280px;
-    max-height: 520px;
+    max-height: 500px;
     overflow-y: auto;
     background: var(--panel);
     padding: 10px;
@@ -170,14 +170,14 @@ body {
 
 .crypto-card {
     background: rgba(255,255,255,0.04);
-    padding: 14px 15px;
+    padding: 12px 15px;
     margin-bottom: 8px;
     border-radius: 6px;
     cursor: pointer;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    transition: background 0.2s, transform 0.1s;
+    transition: background 0.2s;
 }
 
 .light-theme .crypto-card {
@@ -187,10 +187,9 @@ body {
 .crypto-card:hover {
     background: var(--accent);
     color: #000000 !important;
-    transform: translateX(2px);
 }
 
-.crypto-card:hover div, .crypto-card:hover span, .crypto-card:hover small {
+.crypto-card:hover div, .crypto-card:hover span {
     color: #000000 !important;
 }
 </style>
@@ -198,7 +197,7 @@ body {
 
 <body>
 
-<!-- 🎬 Title Splash Matrix -->
+<!-- 🎬 Title / Splash Screen -->
 <div id="title-screen">
     <h1>SYK's Crypto Dashboard</h1>
     <div class="author-tag">made by koli</div>
@@ -209,39 +208,48 @@ body {
     </div>
 </div>
 
-<!-- 📊 Core Web UI Application -->
+<!-- 📊 Main App Screen -->
 <div id="main-app">
     <div class="nav-bar">
         <h1>SYK's Live Tracker</h1>
         
         <div class="nav-controls">
-            <!-- 🔍 Global Ticker Search Bar Console -->
             <div class="search-container">
-                <input type="text" id="crypto-search" class="search-input" placeholder="Search asset (e.g. SOL, BNB)..." onkeydown="handleSearchKeyPress(event)">
+                <input type="text" id="crypto-search" class="search-input" placeholder="Search coin (e.g. SOL, DOGE)..." onkeydown="handleSearchKeyPress(event)">
                 <button class="search-btn" onclick="executeSearch()">Go</button>
             </div>
-            
             <button class="switch-btn" onclick="toggleTheme()">🌓 Switch Theme</button>
         </div>
     </div>
 
     <div class="dashboard-container">
-        <!-- TradingView Embedded Module Sandbox -->
         <div id="chart"></div>
-
-        <!-- Dynamic Client Data Engine Feed -->
         <div id="coin-list">
-            <p style="padding: 10px;">Connecting to decentralized nodes...</p>
+            <p style="padding: 10px;">Connecting live streaming nodes...</p>
         </div>
     </div>
 </div>
 
-<!-- Secure CDN Script Sandbox -->
 <script src="https://tradingview.com"></script>
 
 <script>
 let currentTheme = "dark";
 let currentSymbol = "BTC";
+let cryptoData = {};
+
+// Default Top 10 configurations
+const coinsMeta = {
+    'BTC': { name: 'Bitcoin' },
+    'ETH': { name: 'Ethereum' },
+    'SOL': { name: 'Solana' },
+    'BNB': { name: 'BNB' },
+    'XRP': { name: 'Ripple' },
+    'ADA': { name: 'Cardano' },
+    'DOGE': { name: 'Dogecoin' },
+    'DOT': { name: 'Polkadot' },
+    'LINK': { name: 'Chainlink' },
+    'AVAX': { name: 'Avalanche' }
+};
 
 function selectTheme(theme){
     currentTheme = theme;
@@ -250,7 +258,7 @@ function selectTheme(theme){
     }
     document.getElementById("title-screen").style.display = "none";
     loadChart(currentSymbol);
-    fetchCryptoPrices();
+    startLivePriceStream();
 }
 
 function toggleTheme(){
@@ -264,7 +272,7 @@ function loadChart(symbol){
     document.getElementById("chart").innerHTML = "";
 
     if (typeof TradingView === 'undefined') {
-        document.getElementById("chart").innerHTML = "<p style='padding:20px;'>Initializing TradingView Kernels...</p>";
+        document.getElementById("chart").innerHTML = "<p style='padding:20px;'>Loading chart engine...</p>";
         setTimeout(() => loadChart(symbol), 1000);
         return;
     }
@@ -299,48 +307,60 @@ function handleSearchKeyPress(event) {
     }
 }
 
-// 🛡️ ENCRYPTED CROSS-ORIGIN FALLBACK CONSOLE
-async function fetchCryptoPrices() {
-    try {
-        // High-availability open pipeline proxy bypasses standard domain access rules
-        const fallbackUrl = "https://allorigins.win" + encodeURIComponent("https://coincap.io");
-        const response = await fetch(fallbackUrl);
-        const data = await response.json();
-        const parsedData = JSON.parse(data.contents);
-        const coins = parsedData.data;
-        
-        const listContainer = document.getElementById("coin-list");
-        listContainer.innerHTML = ""; 
+// ⚡ LIVE DIRECT WEBSOCKET CONNECTION (Completely immune to CORS / Proxy blocks)
+function startLivePriceStream() {
+    const listContainer = document.getElementById("coin-list");
+    
+    // Initialize standard container fields
+    listContainer.innerHTML = "";
+    Object.keys(coinsMeta).forEach(sym => {
+        const card = document.createElement("div");
+        card.className = "crypto-card";
+        card.id = `card-${sym}`;
+        card.setAttribute("onclick", `loadChart('${sym}')`);
+        card.innerHTML = `
+            <div><strong>${sym}</strong><div style="font-size:0.75rem; color:#888;">${coinsMeta[sym].name}</div></div>
+            <div style="text-align: right;">
+                <div id="price-${sym}" style="font-weight: bold;">$--.--</div>
+                <span id="percent-${sym}" style="font-size: 0.85rem; font-weight: bold;">0.00%</span>
+            </div>
+        `;
+        listContainer.appendChild(card);
+    });
 
-        coins.forEach(coin => {
-            const displaySymbol = coin.symbol.toUpperCase();
-            const price = parseFloat(coin.priceUsd);
-            const percentage = parseFloat(coin.changePercent24Hr);
+    // Subscribes directly to Binance WebSockets stream network
+    const streams = Object.keys(coinsMeta).map(sym => `${sym.toLowerCase()}usdt@ticker`).join('/');
+    const ws = new WebSocket(`wss://://binance.com{streams}`);
+
+    ws.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        const sym = data.s.replace("USDT", "");
+        
+        const price = parseFloat(data.c);
+        const percentage = parseFloat(data.P);
+        
+        const priceEl = document.getElementById(`price-${sym}`);
+        const percentEl = document.getElementById(`percent-${sym}`);
+        
+        if(priceEl && percentEl) {
+            priceEl.innerText = `$${price.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
             
             const changeColor = percentage >= 0 ? "#00ffcc" : "#ff4a5a";
             const prefix = percentage >= 0 ? "+" : "";
-
-            const coinCard = document.createElement("div");
-            coinCard.className = "crypto-card";
-            coinCard.setAttribute("onclick", `loadChart('${displaySymbol}')`);
             
-            coinCard.innerHTML = `
-                <div>
-                    <strong>${displaySymbol}</strong>
-                    <div style="font-size:0.75rem; color:#888;" class="coin-subname">${coin.name}</div>
-                </div>
-                <div style="text-align: right;">
-                    <div style="font-weight: bold;">$${price.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>
-                    <span style="color: ${changeColor}; font-size: 0.85rem; font-weight: bold;">${prefix}${percentage.toFixed(2)}%</span>
-                </div>
-            `;
-            listContainer.appendChild(coinCard);
-        });
-    } catch (error) {
-        document.getElementById("coin-list").innerHTML = "<p style='color:orange; padding:10px;'>Re-establishing proxy streams...</p>";
-        console.error("Advanced Connection Routing Diagnostic Logs:", error);
-        setTimeout(fetchCryptoPrices, 2500); // Fail-safe auto-reloading loop
-    }
+            percentEl.innerText = `${prefix}${percentage.toFixed(2)}%`;
+            percentEl.style.color = changeColor;
+        }
+    };
+
+    ws.onerror = (err) => {
+        console.error("WebSocket Error: ", err);
+    };
+
+    ws.onclose = () => {
+        // Automatically reconnects if stream ever disconnects
+        setTimeout(startLivePriceStream, 3000);
+    };
 }
 </script>
 
