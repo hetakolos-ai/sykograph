@@ -99,7 +99,7 @@ body {
     gap: 10px;
 }
 
-/* 🔍 STABLE SEARCH LAYOUT */
+/* 🔍 SEARCH UTILITIES */
 .search-container {
     display: flex;
     align-items: center;
@@ -224,7 +224,7 @@ body {
     </div>
 
     <div class="dashboard-container">
-        <!-- 🔒 Static Unblockable Widget Sandbox Frame -->
+        <!-- 🔒 Static Widget Sandbox Frame -->
         <div id="chart-box">
             <iframe id="tv-iframe" src="https://tradingview.com" style="width: 100%; height: 100%; border: none; margin: 0; padding: 0;"></iframe>
         </div>
@@ -271,7 +271,8 @@ function changeChart(symbol){
 
 function updateFrame() {
     const iframe = document.getElementById("tv-iframe");
-    iframe.src = `https://tradingview.com{currentSymbol}USDT&interval=30&theme=${currentTheme}&style=1&timezone=exchange`;
+    // Explicit string addition replaces literal template structures to clear compilation errors
+    iframe.src = "https://tradingview.com:" + currentSymbol + "USDT&interval=30&theme=" + currentTheme + "&style=1&timezone=exchange";
 }
 
 function executeSearch() {
@@ -285,7 +286,7 @@ function executeSearch() {
 
 function handleSearchKeyPress(event) {
     if (event.key === "Enter") {
-        event.preventDefault(); // Deadlocks form refresh
+        event.preventDefault(); // Deadlocks default form refreshes
         executeSearch();
     }
 }
