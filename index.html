@@ -7,248 +7,144 @@ HTML_TEMPLATE = """
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Top 15 Live Crypto Dashboard & Predictor</title>
-    <style>
-        /* Base System Setup */
-        :root { --bg: #0c0f12; --panel: #161a1e; --border: #2b3139; --text: #ffffff; --accent: #00ffcc; --card-hover: #1e2329; --line: #2b3139; }
-        .light-theme { --bg: #f4f6f9; --panel: #ffffff; --border: #e2e8f0; --text: #0f172a; --accent: #0284c7; --card-hover: #f8fafc; --line: #cbd5e1; }
-        
-        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 0; min-height: 100vh; transition: background 0.3s, color 0.3s; }
-        
-        /* 🎯 Floating Logo Styling (Top Left Corner Now) */
-        .fixed-logo {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            width: 60px;  
-            height: auto;
-            z-index: 10000; /* Stays securely on top of everything */
-            pointer-events: none; 
-        }
-        
-        /* 1. Transparent Frosted Glass Title Screen Layout */
-        #title-screen { 
-            position: fixed; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            height: 100%; 
-            background: rgba(12, 15, 18, 0.75); 
-            backdrop-filter: blur(15px);        
-            -webkit-backdrop-filter: blur(15px); 
-            display: flex; 
-            flex-direction: column; 
-            justify-content: center; 
-            align-items: center; 
-            z-index: 9998; 
-            transition: opacity 0.5s ease-out, visibility 0.5s; 
-            color: white; 
-        }
-        #title-screen h1 { font-size: 3rem; margin-bottom: 10px; color: #00ffcc; text-shadow: 0 0 15px rgba(0,255,204,0.4); text-align: center; }
-        #title-screen p { font-size: 1.2rem; color: #b2b9c7; margin-bottom: 40px; text-align: center; max-width: 500px; padding: 0 20px; line-height: 1.6; }
-        
-        /* Button Container Mechanics */
-        .theme-btn-container { display: flex; gap: 20px; margin-bottom: 60px; }
-        .theme-btn { padding: 15px 35px; font-size: 1.1rem; font-weight: bold; border: none; border-radius: 30px; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
-        .theme-btn:hover { transform: translateY(-3px); }
-        .btn-dark { background: #161a1e; color: #ffffff; border: 2px solid #00ffcc; box-shadow: 0 0 15px rgba(0,255,204,0.2); }
-        .btn-light { background: #ffffff; color: #0f172a; border: 2px solid #0284c7; box-shadow: 0 0 15px rgba(2,132,199,0.2); }
-        
-        /* Signature Layout */
-        .credit-text { position: absolute; bottom: 25px; font-size: 0.95rem; color: #8a92a3; letter-spacing: 2px; font-weight: 600; text-transform: uppercase; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
-        /* 2. Main Dashboard Layout Elements */
-        #main-app { padding: 20px; }
-        h1.app-header { text-align: center; color: var(--accent); margin-top: 40px; margin-bottom: 5px; font-size: 2.5rem; }
-        .disclaimer { text-align: center; color: #9096a2; font-size: 0.85rem; margin-bottom: 20px; font-style: italic; }
-        
-        /* 🛠️ Section Header Divider Line */
-        .section-divider {
-            max-width: 1400px;
-            margin: 0 auto 35px auto;
-            border: 0;
-            height: 1px;
-            background: linear-gradient(to right, rgba(0,0,0,0), var(--line), rgba(0,0,0,0));
-        }
-        
-        .dashboard-container { display: flex; flex-direction: column; gap: 30px; max-width: 1400px; margin: 0 auto; }
-        
-        /* Layout Grid System */
-        .crypto-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 15px; }
-        .crypto-card { background: var(--panel); padding: 15px; border-radius: 8px; border: 1px solid var(--border); text-align: center; cursor: pointer; transition: transform 0.2s, border-color 0.2s, background 0.2s; }
-        .crypto-card:hover { transform: translateY(-3px); border-color: var(--accent); background: var(--card-hover); }
-        .crypto-card h3 { margin: 0 0 10px 0; font-size: 1.2rem; text-transform: uppercase; }
-        
-        /* Value Metrics Styles */
-        .price { font-size: 1.4rem; font-weight: bold; color: #f0b90b; margin: 5px 0; }
-        .cap { font-size: 0.85rem; color: #9096a2; margin-bottom: 10px; }
-        
-        /* Analysis Trend Tags Badges */
-        .predict-badge { font-weight: bold; padding: 6px 12px; border-radius: 20px; font-size: 0.85rem; display: inline-block; text-transform: uppercase; }
-        .bullish { background-color: rgba(0, 255, 128, 0.15); color: #00ff80; border: 1px solid #00ff80; }
-        .bearish { background-color: rgba(255, 0, 100, 0.15); color: #ff0064; border: 1px solid #ff0064; }
-        .neutral { background-color: rgba(255, 255, 255, 0.1); color: #b5b7bb; border: 1px solid #b5b7bb; }
-        
-        /* Interactive Charts Canvas */
-        .graph-section { background: var(--panel); padding: 20px; border-radius: 12px; border: 1px solid var(--border); }
-        .graph-header { font-size: 1.5rem; margin-bottom: 15px; color: var(--accent); text-align: center; }
-        .chart-box { height: 480px; width: 100%; background: #000; border-radius: 6px; overflow: hidden; }
-        
-        /* Interface Adjustment Controls */
-        .controls-row { display: flex; justify-content: flex-end; max-width: 1400px; margin: 0 auto 15px auto; }
-        .switch-theme-btn { background: var(--panel); color: var(--text); border: 1px solid var(--border); padding: 8px 16px; border-radius: 20px; cursor: pointer; font-weight: bold; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Crypto Dashboard</title>
+
+<style>
+:root {
+    --bg: #0c0f12;
+    --panel: #161a1e;
+    --text: #ffffff;
+    --accent: #00ffcc;
+}
+
+.light-theme {
+    --bg: #f4f6f9;
+    --panel: #ffffff;
+    --text: #000000;
+    --accent: #0284c7;
+}
+
+body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: Arial;
+    margin: 0;
+}
+
+/* TITLE SCREEN */
+#title-screen {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(10px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+button {
+    padding: 12px 25px;
+    margin: 10px;
+    cursor: pointer;
+}
+
+/* MAIN */
+#main-app {
+    padding: 20px;
+}
+
+.crypto-card {
+    background: var(--panel);
+    padding: 10px;
+    margin: 10px;
+    cursor: pointer;
+}
+</style>
 </head>
+
 <body>
 
-    <!-- 🎯 FLOATING LOGO (ANCHORED TOP LEFT) -->
-    <img src="https://ibb.co" class="fixed-logo" alt="Koli Logo" id="koli-logo">
+<div id="title-screen">
+    <h1>Crypto Dashboard</h1>
+    <button onclick="selectTheme('dark')">🌙 Dark</button>
+    <button onclick="selectTheme('light')">☀️ Light</button>
+</div>
 
-    <!-- 1. SEMI-TRANSPARENT FROSTED INTRO MASK PANEL -->
-    <div id="title-screen">
-        <h1>📊 Short-Term Crypto Analytics</h1>
-        <p>Welcome! Real-time 30-minute market trends and predictive monitoring data vectors. Select a display scheme to enter the application layer:</p>
-        <div class="theme-btn-container">
-            <button class="theme-btn btn-dark" onclick="selectTheme('dark')">🌙 Dark Mode</button>
-            <button class="theme-btn btn-light" onclick="selectTheme('light')">☀️ Light Mode</button>
-        </div>
-        <div class="credit-text">made by koli</div>
+<div id="main-app">
+    <button onclick="toggleTheme()">Switch Theme</button>
+    <h1>Top Coins</h1>
+
+    <div id="chart"></div>
+
+    {% for coin in coins %}
+    <div class="crypto-card" onclick="changeChart('{{ coin.symbol.upper() }}')">
+        {{ coin.name }} - ${{ coin.current_price }}
     </div>
+    {% endfor %}
+</div>
 
-    <!-- 2. CORE SYSTEM DASHBOARD VIEWER -->
-    <div id="main-app">
-        <div class="controls-row">
-            <button class="switch-theme-btn" onclick="toggleTheme()">🔄 Change View Mode</button>
-        </div>
-        
-        <h1 class="app-header">🚀 Top 15 Short-Term Crypto Predictor</h1>
-        <div class="disclaimer">Note: Calculated values are simulated mathematical momentum metrics on a 30-minute baseline scale, not official financial advice.</div>
-        
-        <!-- 🛠️ HORIZONTAL DIVIDER LINE -->
-        <hr class="section-divider">
+<!-- ✅ FIXED TradingView Script -->
+<script src="https://s3.tradingview.com/tv.js"></script>
 
-        <div class="dashboard-container">
-            <div class="graph-section">
-                <div id="chart-title" class="graph-header">Live Market Graph: Bitcoin (BTCUSD) — 30M Interval</div>
-                <div class="chart-box" id="tradingview_widget"></div>
-            </div>
+<script>
+let currentTheme = "dark";
+let widget = null;
 
-            <div class="crypto-grid">
-                {% for coin in coins %}
-                <div class="crypto-card" onclick="changeChart('{{ coin.symbol.upper() }}', '{{ coin.name }}')">
-                    <h3>#{{ coin.market_cap_rank }} {{ coin.name }}</h3>
-                    <div class="price">\${{ "{:,.2f}".format(coin.current_price) if coin.current_price >= 1 else "{:,.4f}".format(coin.current_price) }}</div>
-                    <div class="cap">24h Change: {{ "{:,.2f}".format(coin.price_change_percentage_24h) }}%</div>
-                    
-                    {% if coin.prediction == "Bullish Trend" %}
-                        <div class="predict-badge bullish">📈 30M Upwards Push</div>
-                    {% elif coin.prediction == "Bearish Trend" %}
-                        <div class="predict-badge bearish">📉 30M Downwards Push</div>
-                    {% else %}
-                        <div class="predict-badge neutral">⚖️ 30M Consolidation</div>
-                    {% endif %}
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-    </div>
-    <script type="text/javascript" src="https://tradingview.com"></script>
-    <script type="text/javascript">
-        let currentTheme = 'dark';
-        let currentSymbol = 'BTC';
-        let currentName = 'Bitcoin';
+function selectTheme(theme){
+    currentTheme = theme;
 
-        function selectTheme(theme) {
-            currentTheme = theme;
-            if (theme === 'light') {
-                document.body.classList.add('light-theme');
-                document.getElementById('koli-logo').style.filter = 'invert(1)';
-            }
-            
-            const splash = document.getElementById('title-screen');
-            splash.style.opacity = '0';
-            setTimeout(() => {
-                splash.style.display = 'none';
-                loadChart(currentSymbol);
-            }, 500);
-        }
+    if(theme === "light"){
+        document.body.classList.add("light-theme");
+    }
 
-        function toggleTheme() {
-            currentTheme = (currentTheme === 'dark') ? 'light' : 'dark';
-            document.body.classList.toggle('light-theme');
-            
-            const logo = document.getElementById('koli-logo');
-            if (currentTheme === 'light') {
-                logo.style.filter = 'invert(1)';
-            } else {
-                logo.style.filter = 'none';
-            }
-            
-            loadChart(currentSymbol);
-        }
+    document.getElementById("title-screen").style.display = "none";
+    loadChart("BTC");
+}
 
-        function loadChart(symbol) {
-            currentSymbol = symbol;
-            new TradingView.widget({
-                "width": "100%",
-                "height": "100%",
-                "symbol": "BINANCE:" + symbol + "USDT",
-                "interval": "30",
-                "timezone": "Etc/UTC",
-                "theme": currentTheme,
-                "style": "1",
-                "locale": "en",
-                "enable_publishing": false,
-                "hide_side_toolbar": false,
-                "allow_symbol_change": false,
-                "container_id": "tradingview_widget"
-            });
-        }
+function toggleTheme(){
+    document.body.classList.toggle("light-theme");
+    currentTheme = currentTheme === "dark" ? "light" : "dark";
+    loadChart("BTC");
+}
 
-        function changeChart(symbol, name) {
-            currentName = name;
-            document.getElementById('chart-title').innerText = "Live Market Graph: " + name + " (" + symbol + "USDT) — 30M Interval";
-            loadChart(symbol);
-        }
+function loadChart(symbol){
+    document.getElementById("chart").innerHTML = "";
 
-        loadChart("BTC");
-    </script>
+    widget = new TradingView.widget({
+        container_id: "chart",
+        width: "100%",
+        height: 500,
+        symbol: "BINANCE:" + symbol + "USDT",
+        interval: "30",
+        theme: currentTheme
+    });
+}
+
+function changeChart(symbol){
+    loadChart(symbol);
+}
+</script>
+
 </body>
 </html>
 """
 
-@app.route('/')
+@app.route("/")
 def home():
-    url = "https://coingecko.com"
-    
-    try:
-        response = requests.get(url).json()
-        if not isinstance(response, list):
-            response = []
-            
-        for coin in response:
-            current = coin.get("current_price", 0)
-            high_24h = coin.get("high_24h", 0)
-            low_24h = coin.get("low_24h", 0)
-            
-            if high_24h > low_24h:
-                position_ratio = (current - low_24h) / (high_24h - low_24h)
-            else:
-                position_ratio = 0.5
-                
-            if position_ratio >= 0.85 or coin.get("price_change_percentage_24h", 0) > 1.5:
-                coin["prediction"] = "Bullish Trend"
-            elif position_ratio <= 0.15 or coin.get("price_change_percentage_24h", 0) < -1.5:
-                coin["prediction"] = "Bearish Trend"
-            else:
-                coin["prediction"] = "Neutral Ranging"
-                
-    except Exception:
-        response = []
+    url = "https://api.coingecko.com/api/v3/coins/markets"
+    params = {
+        "vs_currency": "usd",
+        "order": "market_cap_desc",
+        "per_page": 15,
+        "page": 1
+    }
 
-    return render_template_string(HTML_TEMPLATE, coins=response)
+    coins = requests.get(url, params=params).json()
+    return render_template_string(HTML_TEMPLATE, coins=coins)
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run(debug=True)
-
