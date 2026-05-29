@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Crypto Dashboard</title>
+<title>SYK's Crypto Dashboard</title>
 
 <style>
 :root {
@@ -44,9 +44,17 @@ body {
 }
 
 #title-screen h1 {
-    font-size: 2.5rem;
-    margin-bottom: 20px;
+    font-size: 2.8rem;
+    margin-bottom: 5px;
     color: #ffffff;
+}
+
+.author-tag {
+    color: var(--accent);
+    font-size: 1.1rem;
+    font-weight: bold;
+    margin-bottom: 25px;
+    letter-spacing: 1px;
 }
 
 .theme-btn {
@@ -146,7 +154,8 @@ body {
 
 <!-- 🎬 Title / Splash Screen -->
 <div id="title-screen">
-    <h1>Crypto Dashboard</h1>
+    <h1>SYK's Crypto Dashboard</h1>
+    <div class="author-tag">made by koli</div>
     <p style="color: #aaa; margin-bottom: 20px;">Pick your starting theme style:</p>
     <div>
         <button class="theme-btn dark-btn" onclick="selectTheme('dark')">🌙 Dark Mode</button>
@@ -157,7 +166,7 @@ body {
 <!-- 📊 Main App Screen -->
 <div id="main-app">
     <div class="nav-bar">
-        <h1>Top Live Coins</h1>
+        <h1>SYK's Live Tracker</h1>
         <button class="switch-btn" onclick="toggleTheme()">🌓 Switch Theme</button>
     </div>
 
@@ -185,6 +194,7 @@ function selectTheme(theme){
     if(theme === "light"){
         document.body.classList.add("light-theme");
     }
+    // Hides the entire splash screen, including your signature
     document.getElementById("title-screen").style.display = "none";
     loadChart(currentSymbol);
     fetchCryptoPrices();
@@ -217,7 +227,7 @@ function loadChart(symbol){
     });
 }
 
-// 4. Fetch Live Data directly from Binance API (No CORS Errors + Includes Percentages)
+// 4. Fetch Live Data directly from Binance API
 async function fetchCryptoPrices() {
     try {
         const targetSymbols = ['BTCUSDT', 'ETHUSDT', 'SOLUSDT', 'BNBUSDT', 'XRPUSDT', 'ADAUSDT', 'DOGEUSDT', 'AVAXUSDT', 'DOTUSDT', 'LINKUSDT', 'NEARUSDT', 'LTCUSDT', 'TRXUSDT', 'UNIUSDT', 'MATICUSDT'];
@@ -228,7 +238,6 @@ async function fetchCryptoPrices() {
         const listContainer = document.getElementById("coin-list");
         listContainer.innerHTML = ""; 
 
-        // Filter and sort the tracking list
         const filtered = data.filter(coin => targetSymbols.includes(coin.symbol));
         filtered.sort((a, b) => targetSymbols.indexOf(a.symbol) - targetSymbols.indexOf(b.symbol));
 
@@ -237,7 +246,6 @@ async function fetchCryptoPrices() {
             const price = parseFloat(coin.lastPrice);
             const percentage = parseFloat(coin.priceChangePercent);
             
-            // Format percentage color styles
             const changeColor = percentage >= 0 ? "#00ffcc" : "#ff4a5a";
             const prefix = percentage >= 0 ? "+" : "";
 
