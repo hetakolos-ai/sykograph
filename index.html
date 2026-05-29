@@ -45,20 +45,6 @@ body {
     z-index: 10000;
 }
 
-#title-screen h1 {
-    font-size: 2.8rem;
-    margin-bottom: 5px;
-    color: #ffffff;
-}
-
-.author-tag {
-    color: var(--accent);
-    font-size: 1.1rem;
-    font-weight: bold;
-    margin-bottom: 25px;
-    letter-spacing: 1px;
-}
-
 .theme-btn {
     padding: 15px 30px;
     margin: 10px;
@@ -67,75 +53,25 @@ body {
     border: none;
     border-radius: 8px;
     font-weight: bold;
-    transition: transform 0.2s;
 }
 
-.theme-btn:hover {
-    transform: scale(1.05);
-}
+.dark-btn { background: #161a1e; color: #fff; border: 1px solid #00ffcc; }
+.light-btn { background: #fff; color: #000; border: 1px solid #0284c7; }
 
-.dark-btn { background: #161a1e; color: #ffffff; border: 1px solid #00ffcc; }
-.light-btn { background: #ffffff; color: #000000; border: 1px solid #0284c7; }
-
-/* MAIN APP */
+/* MAIN */
 #main-app {
     padding: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
 }
 
 .nav-bar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    flex-wrap: wrap;
-    gap: 15px;
-}
-
-.nav-controls {
-    display: flex;
-    align-items: center;
     gap: 10px;
 }
 
-/* 🔍 SEARCH UTILITIES */
-.search-container {
-    display: flex;
-    align-items: center;
-    background: var(--input);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 6px;
-    padding: 2px 5px;
-}
-
-.light-theme .search-container {
-    border: 1px solid rgba(0,0,0,0.1);
-}
-
-.search-input {
-    background: transparent;
-    border: none;
-    color: var(--text);
-    padding: 8px 12px;
-    font-size: 0.95rem;
-    outline: none;
-    width: 160px;
-}
-
-.search-btn {
-    background: var(--accent);
-    color: #000000;
-    border: none;
-    padding: 8px 15px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: bold;
-    font-size: 0.9rem;
-}
-
 .switch-btn {
-    padding: 10px 20px;
+    padding: 10px 15px;
     cursor: pointer;
     background: var(--panel);
     color: var(--text);
@@ -143,153 +79,131 @@ body {
     border-radius: 5px;
 }
 
-/* DASHBOARD LAYOUT */
+/* DASHBOARD */
 .dashboard-container {
     display: flex;
     gap: 20px;
-    flex-wrap: wrap;
 }
 
 #chart-box {
     flex: 2.5;
-    min-width: 300px;
     height: 500px;
     background: var(--panel);
     border-radius: 8px;
-    overflow: hidden;
+}
+
+#tv-widget {
+    width: 100%;
+    height: 100%;
 }
 
 #coin-list {
     flex: 1;
-    min-width: 280px;
-    max-height: 500px;
-    overflow-y: auto;
-    background: var(--panel);
-    padding: 10px;
-    border-radius: 8px;
 }
 
 .crypto-card {
-    background: rgba(255,255,255,0.04);
-    padding: 15px;
+    background: var(--panel);
+    padding: 12px;
     margin-bottom: 8px;
     border-radius: 6px;
     cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    transition: background 0.2s;
-}
-
-.light-theme .crypto-card {
-    background: rgba(0,0,0,0.04);
-}
-
-.crypto-card:hover {
-    background: var(--accent);
-    color: #000000 !important;
-}
-
-.crypto-card:hover div, .crypto-card:hover span {
-    color: #000000 !important;
 }
 </style>
 </head>
 
 <body>
 
-<!-- 🎬 Splash Selection Portal -->
+<!-- TITLE SCREEN -->
 <div id="title-screen">
     <h1>SYK's Crypto Dashboard</h1>
-    <div class="author-tag">made by koli</div>
-    <p style="color: #aaa; margin-bottom: 20px;">Pick your starting theme style:</p>
-    <div>
-        <button class="theme-btn dark-btn" onclick="selectTheme('dark')">🌙 Dark Mode</button>
-        <button class="theme-btn light-btn" onclick="selectTheme('light')">☀️ Light Mode</button>
-    </div>
+    <p>Choose Theme</p>
+
+    <button class="theme-btn dark-btn" onclick="selectTheme('dark')">🌙 Dark Mode</button>
+    <button class="theme-btn light-btn" onclick="selectTheme('light')">☀️ Light Mode</button>
 </div>
 
-<!-- 📊 App Canvas Workspace -->
+<!-- MAIN APP -->
 <div id="main-app">
+
     <div class="nav-bar">
-        <h1>SYK's Live Tracker</h1>
-        
-        <div class="nav-controls">
-            <div class="search-container">
-                <input type="text" id="crypto-search" class="search-input" placeholder="Search coin (e.g. SOL, DOGE)..." onkeydown="handleSearchKeyPress(event)">
-                <button class="search-btn" onclick="executeSearch()">Go</button>
-            </div>
-            <button class="switch-btn" onclick="toggleTheme()">🌓 Switch Theme</button>
-        </div>
+        <h2>Crypto Tracker</h2>
+        <button class="switch-btn" onclick="toggleTheme()">🌓 Switch Theme</button>
     </div>
 
     <div class="dashboard-container">
-        <!-- 🔒 Static Widget Sandbox Frame -->
+
+        <!-- CHART -->
         <div id="chart-box">
-            <iframe id="tv-iframe" src="https://tradingview.com" style="width: 100%; height: 100%; border: none; margin: 0; padding: 0;"></iframe>
+            <div id="tv-widget"></div>
         </div>
 
-        <!-- Sidebar Navigation Deck -->
+        <!-- COINS -->
         <div id="coin-list">
-            <div class="crypto-card" onclick="changeChart('BTC')"><div><strong>BTC</strong><div style="font-size:0.75rem; color:#888;">Bitcoin</div></div><div style="text-align:right;"><span style="color:#00ffcc; font-weight:bold;">Live Chart</span></div></div>
-            <div class="crypto-card" onclick="changeChart('ETH')"><div><strong>ETH</strong><div style="font-size:0.75rem; color:#888;">Ethereum</div></div><div style="text-align:right;"><span style="color:#00ffcc; font-weight:bold;">Live Chart</span></div></div>
-            <div class="crypto-card" onclick="changeChart('SOL')"><div><strong>SOL</strong><div style="font-size:0.75rem; color:#888;">Solana</div></div><div style="text-align:right;"><span style="color:#00ffcc; font-weight:bold;">Live Chart</span></div></div>
-            <div class="crypto-card" onclick="changeChart('BNB')"><div><strong>BNB</strong><div style="font-size:0.75rem; color:#888;">BNB Token</div></div><div style="text-align:right;"><span style="color:#00ffcc; font-weight:bold;">Live Chart</span></div></div>
-            <div class="crypto-card" onclick="changeChart('XRP')"><div><strong>XRP</strong><div style="font-size:0.75rem; color:#888;">Ripple</div></div><div style="text-align:right;"><span style="color:#00ffcc; font-weight:bold;">Live Chart</span></div></div>
-            <div class="crypto-card" onclick="changeChart('ADA')"><div><strong>ADA</strong><div style="font-size:0.75rem; color:#888;">Cardano</div></div><div style="text-align:right;"><span style="color:#00ffcc; font-weight:bold;">Live Chart</span></div></div>
-            <div class="crypto-card" onclick="changeChart('DOGE')"><div><strong>DOGE</strong><div style="font-size:0.75rem; color:#888;">Dogecoin</div></div><div style="text-align:right;"><span style="color:#00ffcc; font-weight:bold;">Live Chart</span></div></div>
-            <div class="crypto-card" onclick="changeChart('DOT')"><div><strong>DOT</strong><div style="font-size:0.75rem; color:#888;">Polkadot</div></div><div style="text-align:right;"><span style="color:#00ffcc; font-weight:bold;">Live Chart</span></div></div>
-            <div class="crypto-card" onclick="changeChart('LINK')"><div><strong>LINK</strong><div style="font-size:0.75rem; color:#888;">Chainlink</div></div><div style="text-align:right;"><span style="color:#00ffcc; font-weight:bold;">Live Chart</span></div></div>
-            <div class="crypto-card" onclick="changeChart('AVAX')"><div><strong>AVAX</strong><div style="font-size:0.75rem; color:#888;">Avalanche</div></div><div style="text-align:right;"><span style="color:#00ffcc; font-weight:bold;">Live Chart</span></div></div>
+            <div class="crypto-card" onclick="changeChart('BTC')">BTC</div>
+            <div class="crypto-card" onclick="changeChart('ETH')">ETH</div>
+            <div class="crypto-card" onclick="changeChart('SOL')">SOL</div>
+            <div class="crypto-card" onclick="changeChart('BNB')">BNB</div>
+            <div class="crypto-card" onclick="changeChart('XRP')">XRP</div>
         </div>
+
     </div>
 </div>
 
+<!-- TRADINGVIEW SCRIPT -->
+<script src="https://s3.tradingview.com/tv.js"></script>
+
 <script>
+
 let currentTheme = "dark";
 let currentSymbol = "BTC";
+let widget = null;
 
 function selectTheme(theme){
     currentTheme = theme;
+
     if(theme === "light"){
         document.body.classList.add("light-theme");
     }
+
     document.getElementById("title-screen").style.display = "none";
-    updateFrame();
+
+    loadChart("BTC");
 }
 
 function toggleTheme(){
     document.body.classList.toggle("light-theme");
     currentTheme = currentTheme === "dark" ? "light" : "dark";
-    updateFrame();
+    loadChart(currentSymbol);
 }
 
 function changeChart(symbol){
-    currentSymbol = symbol.toUpperCase();
-    updateFrame();
+    currentSymbol = symbol;
+    loadChart(symbol);
 }
 
-function updateFrame() {
-    const iframe = document.getElementById("tv-iframe");
-    // Explicit string addition replaces literal template structures to clear compilation errors
-    iframe.src = "https://tradingview.com:" + currentSymbol + "USDT&interval=30&theme=" + currentTheme + "&style=1&timezone=exchange";
-}
+function loadChart(symbol){
 
-function executeSearch() {
-    const inputField = document.getElementById("crypto-search");
-    const query = inputField.value.trim();
-    if (query !== "") {
-        changeChart(query);
-        inputField.value = "";
+    if(widget){
+        widget.remove();
     }
+
+    widget = new TradingView.widget({
+        container_id: "tv-widget",
+        width: "100%",
+        height: "100%",
+        symbol: "BINANCE:" + symbol + "USDT",
+        interval: "30",
+        timezone: "Etc/UTC",
+        theme: currentTheme,
+        style: "1",
+        locale: "en",
+        allow_symbol_change: true
+    });
 }
 
-function handleSearchKeyPress(event) {
-    if (event.key === "Enter") {
-        event.preventDefault(); // Deadlocks default form refreshes
-        executeSearch();
-    }
-}
+// default load
+loadChart("BTC");
+
 </script>
 
 </body>
