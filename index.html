@@ -262,18 +262,27 @@ function render(prices={}){
 }
 </script>
 <style>
-  /* 1. Forces the page to use the full screen height */
+  /* 1. Reset base page constraints */
   html, body {
-      height: 100% !important;
+      height: 100vh;
       margin: 0;
       padding: 0;
+      overflow: hidden; /* Removes the double scrollbar */
   }
 
-  /* 2. Forces your main container and charts to stretch downwards */
-  div, main, iframe, .tradingview-widget-container {
-      height: 90vh !important; 
+  /* 2. Target only the main content layout containers, NOT small buttons */
+  body > div, main, .dashboard-container {
+      display: flex;
+      height: calc(100vh - 60px); /* Stretches the rest of the page to the bottom */
+  }
+
+  /* 3. Force the chart and the sidebar list to fill the vertical space */
+  iframe, .tradingview-widget-container, #list {
+      height: 100% !important;
+      min-height: 75vh;
   }
 </style>
+
 
 </body>
 </html>
