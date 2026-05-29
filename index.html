@@ -261,41 +261,36 @@ function render(prices={}){
     });
 }
 </script>
+    
 <style>
-  /* 3. Force the chart and the sidebar list to fill the vertical space */
-  iframe, .tradingview-widget-container {
-      height: 100% !important;
-      min-height: 75vh;
-  }
-
-  /* Allows you to scroll down the crypto list if it overflows the screen */
-  #list {
-      height: 100% !important;
-      min-height: 75vh;
-      overflow-y: auto; /* Adds a scrollbar only inside the sidebar when needed */
-  }
-
   /* 1. Reset base page constraints */
   html, body {
       height: 100vh;
       margin: 0;
       padding: 0;
-      overflow: hidden; /* Removes the double scrollbar */
+      overflow: hidden; 
   }
 
-  /* 2. Target only the main content layout containers, NOT small buttons */
+  /* 2. Target the main content layout containers */
   body > div, main, .dashboard-container {
       display: flex;
-      height: calc(100vh - 60px); /* Stretches the rest of the page to the bottom */
+      height: calc(100vh - 60px); 
   }
 
-  /* 3. Force the chart and the sidebar list to fill the vertical space */
-  iframe, .tradingview-widget-container, #list {
+  /* 3. Force the chart to fill the vertical space */
+  iframe, .tradingview-widget-container {
       height: 100% !important;
       min-height: 75vh;
   }
-</style>
 
+  /* 4. Force the crypto list box to fit your monitor and enable scrolling */
+  #list {
+      height: calc(100vh - 80px) !important;
+      max-height: calc(100vh - 80px) !important;
+      overflow-y: auto !important; 
+      display: block; 
+  }
+</style>
 
 </body>
 </html>
